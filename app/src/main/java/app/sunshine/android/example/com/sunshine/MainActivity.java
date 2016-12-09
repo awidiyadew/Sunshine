@@ -1,9 +1,9 @@
 package app.sunshine.android.example.com.sunshine;
 
-import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,9 +12,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
+// http://api.openweathermap.org/data/2.5/weather?id=1645528&appid=3e40a7f5fd7287ce34741d4c5f82779a
+// http://api.openweathermap.org/data/2.5/forecast/daily?id=1645528&mode=json&units=metric&cnt=7&appid=3e40a7f5fd7287ce34741d4c5f82779a
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -23,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new ForecastFragment())
                     .commit();
         }
     }
@@ -48,45 +55,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-            final ArrayList<String> listForecast = new ArrayList<>();
-            listForecast.add("Today - Sunny - 88/63");
-            listForecast.add("Tomorrow - Foggy - 70/46");
-            listForecast.add("Weds - Cloudy - 72/63");
-            listForecast.add("Thurs - Rain - 64/51");
-            listForecast.add("Fri - Foggy - 70/46");
-            listForecast.add("Sat - Sunny - 76/68");
-
-            listForecast.add("Today - Sunny - 88/63");
-            listForecast.add("Tomorrow - Foggy - 70/46");
-            listForecast.add("Weds - Cloudy - 72/63");
-            listForecast.add("Thurs - Rain - 64/51");
-            listForecast.add("Fri - Foggy - 70/46");
-            listForecast.add("Sat - Sunny - 76/68");
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    getActivity(), R.layout.list_item_forecase, R.id.list_item_forecast_textview, listForecast
-            );
-
-            ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
-            listView.setAdapter(adapter);
-
-            return rootView;
-        }
     }
 }
 
