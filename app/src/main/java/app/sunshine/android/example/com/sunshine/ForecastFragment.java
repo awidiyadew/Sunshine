@@ -1,5 +1,6 @@
 package app.sunshine.android.example.com.sunshine;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,8 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -94,6 +97,15 @@ public class ForecastFragment extends Fragment {
                 getActivity(), R.layout.list_item_forecase, R.id.list_item_forecast_textview, mListForecast
         );
         listView.setAdapter(mAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String forecast = mAdapter.getItem(i);
+                // Toast.makeText(getContext(), forecast, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), DetailActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
