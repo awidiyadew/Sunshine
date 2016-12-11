@@ -1,9 +1,11 @@
 package app.sunshine.android.example.com.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
@@ -40,7 +42,6 @@ public class ForecastFragment extends Fragment {
     private static final String TAG = "ForecastFragment";
     // Going to use City ID rather than postal code :)
     private static final String DENPASAR_CITY_ID = "1645528";
-    FetchWeatherTask mFetchWeatherTask;
     ArrayList<String> mListForecast;
     ArrayAdapter<String> mAdapter;
     ListView listView;
@@ -63,15 +64,26 @@ public class ForecastFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_refresh){
-            mFetchWeatherTask = new FetchWeatherTask();
-            mFetchWeatherTask.execute(DENPASAR_CITY_ID);
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void updateWeather() {
+        FetchWeatherTask mFetchWeatherTask = new FetchWeatherTask();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+        //mFetchWeatherTask.execute(DENPASAR_CITY_ID);
+        mFetchWeatherTask.execute(location);
+        Log.d(TAG, "CITY ID : " + location);
+    }
 
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,19 +91,6 @@ public class ForecastFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mListForecast = new ArrayList<>();
-        mListForecast.add("Today - Sunny - 88/63");
-        mListForecast.add("Tomorrow - Foggy - 70/46");
-        mListForecast.add("Weds - Cloudy - 72/63");
-        mListForecast.add("Thurs - Rain - 64/51");
-        mListForecast.add("Fri - Foggy - 70/46");
-        mListForecast.add("Sat - Sunny - 76/68");
-
-        mListForecast.add("Today - Sunny - 88/63");
-        mListForecast.add("Tomorrow - Foggy - 70/46");
-        mListForecast.add("Weds - Cloudy - 72/63");
-        mListForecast.add("Thurs - Rain - 64/51");
-        mListForecast.add("Fri - Foggy - 70/46");
-        mListForecast.add("Sat - Sunny - 76/68");
 
         mAdapter = new ArrayAdapter<>(
                 getActivity(), R.layout.list_item_forecase, R.id.list_item_forecast_textview, mListForecast
@@ -103,6 +102,7 @@ public class ForecastFragment extends Fragment {
                 String forecast = mAdapter.getItem(i);
                 // Toast.makeText(getContext(), forecast, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getContext(), DetailActivity.class);
+                intent.putExtra(Intent.EXTRA_TEXT, forecast);
                 startActivity(intent);
             }
         });
@@ -126,6 +126,16 @@ public class ForecastFragment extends Fragment {
          * Prepare the weather high/lows for presentation.
          */
         private String formatHighLows(double high, double low) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String unitType = preferences.getString(getString(R.string.pref_units_key), getString(R.string.pref_units_metric));
+
+            if (unitType.equals(getString(R.string.pref_units_imperial))) {
+                high = (high * 1.8) + 32;
+                low = (low * 1.8) + 32;
+            } else if (!unitType.equals(getString(R.string.pref_units_metric))) {
+                Log.d(TAG, "Unit type not found: " + unitType);
+            }
+
             // For presentation, assume the user doesn't care about tenths of a degree.
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);

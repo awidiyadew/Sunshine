@@ -5,5 +5,15 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_location_label">Location (by City ID)</string>
+    <string name="pref_location_key">location</string>
+    <string name="pref_location_default">1645528</string>
+    <string name="pref_units_label">Units</string>
+    <string name="pref_units_key">units</string>
+    <string name="pref_units_metric">metric</string>
+    <string name="pref_units_imperial">imperial</string>
+    <string name="pref_units_label_metric">Metric</string>
+    <string name="pref_units_label_imperial">Imperial</string>
 
 </resources>
